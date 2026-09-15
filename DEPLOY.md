@@ -57,9 +57,14 @@ The API rejects any origin not on its allowlist. Checked on 2026-09-15:
 
 ```
 https://admin.rajdhanifood.com                    allowed
-http://localhost:5173                             allowed
+http://localhost:5173                             allowed  (the customer site)
+http://localhost:5174                             allowed  (this dashboard)
 https://<anything>.vercel.app                     BLOCKED
 ```
+
+The dev server runs on **5174**, matching the API's `ADMIN_URL`. That is the
+origin it builds invite and password-reset links against, so a dashboard on 5173
+would receive emailed links pointing at a port it is not serving.
 
 A blocked origin gets **no `Access-Control-Allow-Origin` header at all**, which
 means the deployed dashboard will load, render its shell, and then fail every

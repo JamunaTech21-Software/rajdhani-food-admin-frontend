@@ -13,6 +13,7 @@ import { Checkbox, Field, Textarea } from "../../components/ui/Field.jsx";
 import { MediaPicker } from "../../components/ui/MediaPicker.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
+import { useDialogGuard } from "../../hooks/useDialogGuard.js";
 import { KEY_PATTERN, keyChangeWarning, publicDownloadPath, toKey } from "./downloadKey.js";
 
 const schema = z.object({
@@ -140,12 +141,13 @@ function DownloadForm({ open, onOpenChange, download }) {
     },
   });
 
-  function requestClose(next) {
-    if (!next && isDirty && !isPending) {
-      if (!window.confirm("Discard your unsaved changes to this download?")) return;
-    }
-    onOpenChange(next);
-  }
+  // §18.3 unsaved-changes guard — see hooks/useDialogGuard.js.
+  const requestClose = useDialogGuard({
+    isDirty,
+    isSaving: isPending,
+    onOpenChange,
+    what: "this download",
+  });
 
   return (
     <Dialog.Root open={open} onOpenChange={requestClose}>

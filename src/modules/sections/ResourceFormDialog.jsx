@@ -14,6 +14,7 @@ import { api } from "../../lib/api.js";
 import { cn } from "../../lib/cn.js";
 import { MediaPicker } from "../../components/ui/MediaPicker.jsx";
 import { IconPicker } from "../categories/IconPicker.jsx";
+import { useDialogGuard } from "../../hooks/useDialogGuard.js";
 
 function RatingField({ value, onChange, label }) {
   return (
@@ -108,12 +109,13 @@ export function ResourceFormDialog({ open, onOpenChange, resource, row, scope })
     },
   });
 
-  function requestClose(next) {
-    if (!next && isDirty && !isPending) {
-      if (!window.confirm("Discard your unsaved changes?")) return;
-    }
-    onOpenChange(next);
-  }
+  // §18.3 unsaved-changes guard — see hooks/useDialogGuard.js.
+  const requestClose = useDialogGuard({
+    isDirty,
+    isSaving: isPending,
+    onOpenChange,
+    what: "this item",
+  });
 
   function renderField(field) {
     const error = errors[field.name]?.message;

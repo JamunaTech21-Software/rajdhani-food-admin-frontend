@@ -3,6 +3,7 @@ import { ImageOff, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { SortableList, SortableRow } from "../../components/data/SortableList.jsx";
+import { TruncationNotice } from "../../components/data/TruncationNotice.jsx";
 import { Button } from "../../components/ui/Button.jsx";
 import { Card, CardHeader } from "../../components/ui/Card.jsx";
 import { useConfirm } from "../../components/ui/confirm-context.js";
@@ -311,6 +312,8 @@ export function GalleryPage() {
                 )}
               </SortableList>
             )}
+
+            <TruncationNotice meta={images.data?.meta} shown={rows.length} noun="images" />
           </Card>
         </>
       )}

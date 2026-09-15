@@ -7,6 +7,7 @@ import { ApiError, ErrorCode } from "@shared/api/errors.js";
 
 import { Badge } from "../../components/ui/Badge.jsx";
 import { Button } from "../../components/ui/Button.jsx";
+import { useConfirm } from "../../components/ui/confirm-context.js";
 import { Field, Textarea } from "../../components/ui/Field.jsx";
 import { Skeleton } from "../../components/ui/Skeleton.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
@@ -19,6 +20,7 @@ import { folderLabel, formatSize } from "./folders.js";
 export function MediaDetailDrawer({ assetId, open, onOpenChange, onDeleted }) {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const confirm = useConfirm();
 
   const [draft, setDraft] = useState({ alt_text: "", caption: "" });
   const [draftFor, setDraftFor] = useState(null);
@@ -71,6 +73,22 @@ export function MediaDetailDrawer({ assetId, open, onOpenChange, onDeleted }) {
       toast.error("Could not delete", error.message);
     },
   });
+
+  /**
+   * The only irreversible action in the dashboard — it removes the file from
+   * Cloudinary too, so there is no undo and no copy left anywhere. It was the
+   * one destructive action firing straight from its click handler.
+   */
+  async function handleDelete() {
+    const confirmed = await confirm({
+      title: "Delete this asset permanently?",
+      description:
+        "It is removed from Cloudinary as well as the library, so anything still pointing at its URL will break. This cannot be undone.",
+      confirmLabel: "Delete permanently",
+      tone: "danger",
+    });
+    if (confirmed) remove.mutate();
+  }
 
   const inUse = isInUse(asset);
   const dirty =
@@ -219,7 +237,7 @@ export function MediaDetailDrawer({ assetId, open, onOpenChange, onDeleted }) {
                     className="mt-3"
                     disabled={inUse}
                     loading={remove.isPending}
-                    onClick={() => remove.mutate()}
+                    onClick={handleDelete}
                   >
                     <Trash2 size={14} strokeWidth={1.75} aria-hidden="true" />
                     Delete permanently

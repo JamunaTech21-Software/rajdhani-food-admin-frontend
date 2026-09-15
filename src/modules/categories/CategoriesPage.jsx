@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { SortableList, SortableRow } from "../../components/data/SortableList.jsx";
+import { TruncationNotice } from "../../components/data/TruncationNotice.jsx";
 import { Badge } from "../../components/ui/Badge.jsx";
 import { Button } from "../../components/ui/Button.jsx";
 import { Card } from "../../components/ui/Card.jsx";
@@ -167,6 +168,8 @@ export function CategoriesPage() {
             )}
           </SortableList>
         )}
+
+        <TruncationNotice meta={data?.meta} shown={data?.items?.length} noun="categories" />
       </Card>
 
       <CategoryFormDialog open={formOpen} onOpenChange={setFormOpen} category={editing} />

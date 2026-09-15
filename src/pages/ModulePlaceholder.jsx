@@ -9,20 +9,20 @@ import { EmptyState } from "../components/ui/EmptyState.jsx";
  * the navigation look broken and makes the role filtering impossible to check,
  * since every link would land on the same page whatever the capability.
  */
-export function ModulePlaceholder({ label, issue }) {
+export function ModulePlaceholder({ label, issue, blockedOn }) {
+  // "Waiting on the backend" and "not started" are different things, and an
+  // admin chasing a missing feature deserves to know which one this is.
+  const description = blockedOn
+    ? `This screen is waiting on ${blockedOn}. It will work as soon as that lands — nothing is missing on this side.`
+    : issue
+      ? `This screen is delivered by ${issue}. Your role has access to it.`
+      : "This screen is not available yet.";
+
   return (
     <Container as="main" className="py-8">
       <h1 className="text-2xl font-semibold text-ink">{label}</h1>
       <Card className="mt-6">
-        <EmptyState
-          icon="boxes"
-          title="Not built yet"
-          description={
-            issue
-              ? `This screen is delivered by ${issue}. Your role has access to it.`
-              : "This screen is not available yet."
-          }
-        />
+        <EmptyState icon="boxes" title={blockedOn ? "Waiting on the API" : "Not built yet"} description={description} />
       </Card>
     </Container>
   );

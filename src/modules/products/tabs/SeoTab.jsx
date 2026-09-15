@@ -1,7 +1,7 @@
 import { useWatch } from "react-hook-form";
 
 import { Field, Textarea } from "../../../components/ui/Field.jsx";
-import { SITE_URL } from "../../../config.js";
+import { publicUrl } from "../../../lib/publicUrl.js";
 
 // Rough limits before Google truncates. Advisory, not enforced — the API does
 // not reject a long one, and an editor may have a reason.
@@ -27,7 +27,9 @@ export function SeoTab({ register, control, errors }) {
   });
 
   const shownTitle = metaTitle || name || "Product name";
-  const shownUrl = `${SITE_URL}/products/${slug || "product-slug"}`;
+  // Through the shared builder, so the preview cannot show a URL shape the
+  // real "View on site" link does not use.
+  const shownUrl = publicUrl("product", slug || "product-slug");
 
   return (
     <div className="flex flex-col gap-5">

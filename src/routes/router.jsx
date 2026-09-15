@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
 
+import { AcceptInvitePage } from "../pages/AcceptInvitePage.jsx";
 import { AdminLayout } from "../components/layout/AdminLayout.jsx";
 import { PLACEHOLDER_ITEMS } from "../components/layout/nav-config.js";
 import { LoginPage } from "../pages/LoginPage.jsx";
@@ -31,23 +32,29 @@ const MessagesPage = named(() => import("../modules/messages/MessagesPage.jsx"),
 const SubscribersPage = named(() => import("../modules/subscribers/SubscribersPage.jsx"), "SubscribersPage");
 const MediaLibraryPage = named(() => import("../modules/media/MediaLibraryPage.jsx"), "MediaLibraryPage");
 const DownloadsPage = named(() => import("../modules/downloads/DownloadsPage.jsx"), "DownloadsPage");
+const SettingsPage = named(() => import("../modules/settings/SettingsPage.jsx"), "SettingsPage");
+const AuditLogPage = named(() => import("../modules/audit/AuditLogPage.jsx"), "AuditLogPage");
 
 /**
  * Every module route is wrapped in the capability the API guards it with, so a
  * hand-typed URL is refused by the client too — though the API remains the
  * authority. Screens RTPP-42 onward will replace their placeholder element.
  */
-const placeholderRoutes = PLACEHOLDER_ITEMS.map(({ to, label, capability, issue }) => ({
+const placeholderRoutes = PLACEHOLDER_ITEMS.map(({ to, label, capability, issue, blockedOn }) => ({
   path: to,
   element: (
     <RequireCapability capability={capability}>
-      <ModulePlaceholder label={label} issue={issue} />
+      <ModulePlaceholder label={label} issue={issue} blockedOn={blockedOn} />
     </RequireCapability>
   ),
 }));
 
 export const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
+  // Public: the invitee has no account yet, so this cannot sit behind the
+  // session guard. The 64-character token in the query string is the only
+  // credential, and the API validates it.
+  { path: "/accept-invite", element: <AcceptInvitePage /> },
   {
     element: <ProtectedRoute />,
     children: [
@@ -121,6 +128,18 @@ export const router = createBrowserRouter([
           {
             element: <RequireCapability capability="downloads" />,
             children: [{ path: "/downloads", element: <DownloadsPage /> }],
+          },
+          {
+            // §7.3 grants `settings` to Super Admin alone, and the API enforces
+            // the same on every endpoint this screen touches.
+            element: <RequireCapability capability="settings" minimum="write" />,
+            children: [{ path: "/settings", element: <SettingsPage /> }],
+          },
+          {
+            // §7.3 gives this capability as READ and never WRITE, to anyone —
+            // a role that could edit its own trail would make it worthless.
+            element: <RequireCapability capability="audit_log" />,
+            children: [{ path: "/audit-logs", element: <AuditLogPage /> }],
           },
           ...placeholderRoutes,
         ],

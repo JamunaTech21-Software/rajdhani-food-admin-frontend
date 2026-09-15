@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ExternalLink, Pencil, Plus, Search } from "lucide-react";
+import { Pencil, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 
@@ -10,11 +10,11 @@ import { Button } from "../../components/ui/Button.jsx";
 import { Card } from "../../components/ui/Card.jsx";
 import { Container } from "../../components/ui/Container.jsx";
 import { EmptyState, ErrorState } from "../../components/ui/EmptyState.jsx";
-import { SITE_URL } from "../../config.js";
 import { useNow } from "../../hooks/useNow.js";
 import { api } from "../../lib/api.js";
 import { formatDateTime } from "../../lib/format.js";
 import { isPubliclyVisible, NEWS_LABEL, NEWS_TONE, newsState } from "../../lib/newsSchedule.js";
+import { ViewOnSiteLink } from "../../components/ui/ViewOnSiteLink.jsx";
 
 const LIMIT = 20;
 const STATUSES = ["DRAFT", "PUBLISHED", "ARCHIVED"];
@@ -83,18 +83,15 @@ export function NewsPage() {
         cell: ({ row }) => (
           <span className="flex items-center justify-end gap-1">
             {/* Only a genuinely live post has something to look at — a scheduled
-                one would 404 on the public site. */}
-            {isPubliclyVisible(row.original, now) ? (
-              <a
-                href={`${SITE_URL}/news/${row.original.slug}`}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`View ${row.original.title} on the site`}
-                className="grid size-8 place-items-center rounded-md text-ink-subtle hover:bg-ground hover:text-ink"
-              >
-                <ExternalLink size={15} strokeWidth={1.75} aria-hidden="true" />
-              </a>
-            ) : null}
+                one would 404 on the public site, so news passes its own
+                schedule-aware verdict rather than the generic published check. */}
+            <ViewOnSiteLink
+              kind="news"
+              identifier={row.original.slug}
+              visible={isPubliclyVisible(row.original, now)}
+              title={row.original.title}
+              iconOnly
+            />
             <Link
               to={`/news/${row.original.id}`}
               aria-label={`Edit ${row.original.title}`}

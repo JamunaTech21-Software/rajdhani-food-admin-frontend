@@ -88,9 +88,20 @@ export const NAV_GROUPS = [
     id: "system",
     label: "System",
     items: [
-      { to: "/settings", label: "Settings", icon: Settings, capability: "settings", issue: "RTPP-52" },
-      { to: "/users", label: "Admin users", icon: UserCog, capability: "admin_users", issue: "RTPP-53" },
-      { to: "/audit-logs", label: "Audit log", icon: ScrollText, capability: "audit_log", issue: "RTPP-54" },
+      { to: "/settings", label: "Settings", icon: Settings, capability: "settings" },
+      {
+        to: "/users",
+        label: "Admin users",
+        icon: UserCog,
+        capability: "admin_users",
+        issue: "RTPP-53",
+        // The invite-acceptance half of RTPP-53 is built and live at
+        // /accept-invite. This half cannot be: `/admin/users` returns
+        // "No route matches this path", so there is nothing to list, invite
+        // through, or deactivate against. Verified 2026-09-15.
+        blockedOn: "the /admin/users endpoints, which the API does not expose yet",
+      },
+      { to: "/audit-logs", label: "Audit log", icon: ScrollText, capability: "audit_log" },
     ],
   },
 ];

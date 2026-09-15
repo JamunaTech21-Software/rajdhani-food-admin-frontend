@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { SortableList, SortableRow } from "../../components/data/SortableList.jsx";
+import { TruncationNotice } from "../../components/data/TruncationNotice.jsx";
 import { Badge } from "../../components/ui/Badge.jsx";
 import { Button } from "../../components/ui/Button.jsx";
 import { Card, CardHeader } from "../../components/ui/Card.jsx";
@@ -234,6 +235,15 @@ export function BannersPage() {
           </section>
         ))
       )}
+
+      {/* The fetch is capped at 200 so every banner is present for drag
+          ordering. Past that, the page would quietly show a subset. */}
+      <TruncationNotice
+        meta={data?.meta}
+        shown={data?.items?.length}
+        noun="banners"
+        className="rounded-lg border-t-0"
+      />
 
       <BannerFormDialog
         open={formOpen}

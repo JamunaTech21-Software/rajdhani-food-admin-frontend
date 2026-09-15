@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ExternalLink, Pencil, Plus, Search, Star } from "lucide-react";
+import { Pencil, Plus, Search, Star } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 
@@ -10,9 +10,9 @@ import { Button } from "../../components/ui/Button.jsx";
 import { Card } from "../../components/ui/Card.jsx";
 import { Container } from "../../components/ui/Container.jsx";
 import { EmptyState, ErrorState } from "../../components/ui/EmptyState.jsx";
-import { SITE_URL } from "../../config.js";
 import { api } from "../../lib/api.js";
 import { formatDate } from "../../lib/format.js";
+import { ViewOnSiteLink } from "../../components/ui/ViewOnSiteLink.jsx";
 
 const STATUSES = ["DRAFT", "PUBLISHED", "ARCHIVED"];
 const LIMIT = 20;
@@ -100,17 +100,13 @@ export function ProductsPage() {
         cell: ({ row }) => (
           <span className="flex items-center justify-end gap-1">
             {/* "View on site" only where there is something published to view. */}
-            {row.original.status === "PUBLISHED" ? (
-              <a
-                href={`${SITE_URL}/products/${row.original.slug}`}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`View ${row.original.name} on the site`}
-                className="grid size-8 place-items-center rounded-md text-ink-subtle hover:bg-ground hover:text-ink"
-              >
-                <ExternalLink size={15} strokeWidth={1.75} aria-hidden="true" />
-              </a>
-            ) : null}
+            <ViewOnSiteLink
+              kind="product"
+              identifier={row.original.slug}
+              visible={row.original.status === "PUBLISHED"}
+              title={row.original.name}
+              iconOnly
+            />
             <Link
               to={`/products/${row.original.id}`}
               aria-label={`Edit ${row.original.name}`}

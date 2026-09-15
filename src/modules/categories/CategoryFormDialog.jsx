@@ -12,6 +12,7 @@ import { Button } from "../../components/ui/Button.jsx";
 import { Checkbox, Field, Textarea } from "../../components/ui/Field.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
+import { useDialogGuard } from "../../hooks/useDialogGuard.js";
 import { IconPicker } from "./IconPicker.jsx";
 
 const schema = z.object({
@@ -101,13 +102,13 @@ export function CategoryFormDialog({ open, onOpenChange, category }) {
     },
   });
 
-  function requestClose(next) {
-    if (!next && isDirty && !isPending) {
-      // §18.3 — never discard typing silently.
-      if (!window.confirm("Discard your unsaved changes to this category?")) return;
-    }
-    onOpenChange(next);
-  }
+  // §18.3 unsaved-changes guard — see hooks/useDialogGuard.js.
+  const requestClose = useDialogGuard({
+    isDirty,
+    isSaving: isPending,
+    onOpenChange,
+    what: "this category",
+  });
 
   return (
     <Dialog.Root open={open} onOpenChange={requestClose}>

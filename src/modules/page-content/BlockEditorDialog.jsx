@@ -14,6 +14,7 @@ import { MediaPicker } from "../../components/ui/MediaPicker.jsx";
 import { Skeleton } from "../../components/ui/Skeleton.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
+import { useDialogGuard } from "../../hooks/useDialogGuard.js";
 
 const RichTextEditor = lazy(() =>
   import("../../components/ui/RichTextEditor.jsx").then((m) => ({ default: m.RichTextEditor })),
@@ -144,12 +145,13 @@ export function BlockEditorDialog({ open, onOpenChange, pageKey, block }) {
     },
   });
 
-  function requestClose(next) {
-    if (!next && isDirty && !isPending) {
-      if (!window.confirm("Discard your unsaved changes to this block?")) return;
-    }
-    onOpenChange(next);
-  }
+  // §18.3 unsaved-changes guard — see hooks/useDialogGuard.js.
+  const requestClose = useDialogGuard({
+    isDirty,
+    isSaving: isPending,
+    onOpenChange,
+    what: "this block",
+  });
 
   const uses = block?.uses ?? [];
   const shows = (field) => showAll || uses.includes(field);

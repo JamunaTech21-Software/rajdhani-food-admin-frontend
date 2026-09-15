@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { lazy, Suspense, useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router";
@@ -18,12 +18,12 @@ import { ErrorState } from "../../components/ui/EmptyState.jsx";
 import { Skeleton } from "../../components/ui/Skeleton.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { UnsavedChangesDialog } from "../../components/ui/UnsavedChangesDialog.jsx";
-import { SITE_URL } from "../../config.js";
 import { useNow } from "../../hooks/useNow.js";
 import { useUnsavedGuard } from "../../hooks/useUnsavedGuard.js";
 import { api } from "../../lib/api.js";
 import { fromDateTimeLocalInput, toDateTimeLocalInput } from "../../lib/format.js";
 import { isPubliclyVisible, NEWS_LABEL, NEWS_TONE, newsState } from "../../lib/newsSchedule.js";
+import { ViewOnSiteLink } from "../../components/ui/ViewOnSiteLink.jsx";
 import { TagInput } from "./TagInput.jsx";
 
 const RichTextEditor = lazy(() =>
@@ -191,17 +191,11 @@ export function NewsFormPage() {
             </h1>
             <div className="mt-1.5 flex items-center gap-2">
               <Badge tone={NEWS_TONE[pendingState]}>{NEWS_LABEL[pendingState]}</Badge>
-              {post.data && isPubliclyVisible(post.data, now) ? (
-                <a
-                  href={`${SITE_URL}/news/${post.data.slug}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-sm text-brand hover:text-brand-dark"
-                >
-                  View on site
-                  <ExternalLink size={13} strokeWidth={1.75} aria-hidden="true" />
-                </a>
-              ) : null}
+              <ViewOnSiteLink
+                kind="news"
+                identifier={post.data?.slug}
+                visible={Boolean(post.data) && isPubliclyVisible(post.data, now)}
+              />
             </div>
           </div>
 

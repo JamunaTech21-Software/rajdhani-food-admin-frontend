@@ -13,6 +13,7 @@ import { Field, Textarea } from "../../components/ui/Field.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
 import { IconPicker } from "../categories/IconPicker.jsx";
+import { useDialogGuard } from "../../hooks/useDialogGuard.js";
 
 const schema = z.object({
   name: z.string().min(1, "Enter a name").max(255),
@@ -83,12 +84,13 @@ export function GalleryCategoryDialog({ open, onOpenChange, category }) {
     },
   });
 
-  function requestClose(next) {
-    if (!next && isDirty && !isPending) {
-      if (!window.confirm("Discard your unsaved changes?")) return;
-    }
-    onOpenChange(next);
-  }
+  // §18.3 unsaved-changes guard — see hooks/useDialogGuard.js.
+  const requestClose = useDialogGuard({
+    isDirty,
+    isSaving: isPending,
+    onOpenChange,
+    what: "this category",
+  });
 
   return (
     <Dialog.Root open={open} onOpenChange={requestClose}>

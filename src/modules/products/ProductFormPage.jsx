@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router";
@@ -16,10 +16,10 @@ import { ErrorState } from "../../components/ui/EmptyState.jsx";
 import { Skeleton } from "../../components/ui/Skeleton.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { UnsavedChangesDialog } from "../../components/ui/UnsavedChangesDialog.jsx";
-import { SITE_URL } from "../../config.js";
 import { useUnsavedGuard } from "../../hooks/useUnsavedGuard.js";
 import { api } from "../../lib/api.js";
 import { cn } from "../../lib/cn.js";
+import { ViewOnSiteLink } from "../../components/ui/ViewOnSiteLink.jsx";
 import { productSchema, toApiBody, toFormValues } from "./productSchema.js";
 import { BasicTab } from "./tabs/BasicTab.jsx";
 import { HighlightsTab } from "./tabs/HighlightsTab.jsx";
@@ -180,17 +180,11 @@ export function ProductFormPage() {
             </h1>
             <div className="mt-1.5 flex items-center gap-2">
               {current ? <StatusBadge status={current.status} /> : null}
-              {current?.status === "PUBLISHED" ? (
-                <a
-                  href={`${SITE_URL}/products/${current.slug}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-sm text-brand hover:text-brand-dark"
-                >
-                  View on site
-                  <ExternalLink size={13} strokeWidth={1.75} aria-hidden="true" />
-                </a>
-              ) : null}
+              <ViewOnSiteLink
+                kind="product"
+                identifier={current?.slug}
+                visible={current?.status === "PUBLISHED"}
+              />
             </div>
           </div>
 

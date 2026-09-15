@@ -12,6 +12,7 @@ import { EmptyState, ErrorState } from "../../components/ui/EmptyState.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
 import { useCan } from "../../stores/authStore.js";
+import { ViewOnSiteLink } from "../../components/ui/ViewOnSiteLink.jsx";
 import { publicDownloadPath } from "./downloadKey.js";
 import { DownloadFormDialog } from "./DownloadFormDialog.jsx";
 import { deleteWarning } from "./references.js";
@@ -163,9 +164,20 @@ export function DownloadsPage() {
       id: "actions",
       header: <span className="sr-only">Actions</span>,
       meta: { align: "right", width: "6rem" },
-      cell: ({ row }) =>
-        canWrite ? (
-          <span className="flex justify-end gap-1">
+      cell: ({ row }) => (
+        <span className="flex justify-end gap-1">
+          {/* Live only when it is active *and* has a file behind it — the
+              public route resolves the key to a URL, and there is none
+              without a file. */}
+          <ViewOnSiteLink
+            kind="download"
+            identifier={row.original.key}
+            visible={row.original.is_active !== false && Boolean(row.original.file)}
+            title={row.original.title}
+            iconOnly
+          />
+          {canWrite ? (
+            <>
             <button
               type="button"
               onClick={() => openEdit(row.original)}
@@ -182,8 +194,10 @@ export function DownloadsPage() {
             >
               <Trash2 size={15} strokeWidth={1.75} aria-hidden="true" />
             </button>
-          </span>
-        ) : null,
+            </>
+          ) : null}
+        </span>
+      ),
     },
   ];
 

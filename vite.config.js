@@ -69,10 +69,15 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      // The API's CORS allowlist contains http://localhost:5173. Letting Vite
-      // drift to the next free port silently breaks every request in the
-      // browser, so fail loudly instead.
-      port: 5173,
+      // 5174, not 5173. The API reserves 5173 for the customer site (SITE_URL)
+      // and 5174 for this dashboard (ADMIN_URL) — and ADMIN_URL is what builds
+      // the invite and password-reset links it emails. On 5173 those links
+      // point at a port this app is not serving, and the invite flow dead-ends.
+      // Both origins are on the CORS allowlist, so only the link target moves.
+      //
+      // strictPort because drifting to the next free port puts the app on an
+      // origin CORS refuses, which breaks every request with no obvious cause.
+      port: 5174,
       strictPort: true,
     },
   };

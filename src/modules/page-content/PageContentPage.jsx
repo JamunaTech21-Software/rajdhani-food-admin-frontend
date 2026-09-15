@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ExternalLink, Pencil, Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 
@@ -9,9 +9,9 @@ import { Card, CardHeader } from "../../components/ui/Card.jsx";
 import { Container } from "../../components/ui/Container.jsx";
 import { ErrorState } from "../../components/ui/EmptyState.jsx";
 import { Skeleton } from "../../components/ui/Skeleton.jsx";
-import { SITE_URL } from "../../config.js";
 import { api } from "../../lib/api.js";
 import { cn } from "../../lib/cn.js";
+import { ViewOnSiteLink } from "../../components/ui/ViewOnSiteLink.jsx";
 import { BlockEditorDialog } from "./BlockEditorDialog.jsx";
 import { blocksForPage, PAGES, pageOf, SECTIONS_ELSEWHERE } from "./page-catalogue.js";
 
@@ -80,15 +80,7 @@ export function PageContentPage() {
                 missing ? ` · ${missing} not set up yet` : ""
               }`}
               action={
-                <a
-                  href={`${SITE_URL}${page.path}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-dark"
-                >
-                  View page
-                  <ExternalLink size={13} strokeWidth={1.75} aria-hidden="true" />
-                </a>
+                <ViewOnSiteLink kind="page" identifier={page.path} label="View page" />
               }
             />
 

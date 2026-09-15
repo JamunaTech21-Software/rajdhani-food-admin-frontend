@@ -15,6 +15,7 @@ import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
 import { hasInvalidWindow } from "../../lib/bannerSchedule.js";
 import { fromDateTimeLocalInput, toDateTimeLocalInput } from "../../lib/format.js";
+import { useDialogGuard } from "../../hooks/useDialogGuard.js";
 import { PLACEMENT_GROUPS, PLACEMENTS } from "./placements.js";
 import { BannerPreview } from "./BannerPreview.jsx";
 
@@ -157,12 +158,13 @@ export function BannerFormDialog({ open, onOpenChange, banner, placement }) {
     },
   });
 
-  function requestClose(next) {
-    if (!next && isDirty && !isPending) {
-      if (!window.confirm("Discard your unsaved changes to this banner?")) return;
-    }
-    onOpenChange(next);
-  }
+  // §18.3 unsaved-changes guard — see hooks/useDialogGuard.js.
+  const requestClose = useDialogGuard({
+    isDirty,
+    isSaving: isPending,
+    onOpenChange,
+    what: "this banner",
+  });
 
   return (
     <Dialog.Root open={open} onOpenChange={requestClose}>

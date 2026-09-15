@@ -8,12 +8,14 @@ import {
   Link as LinkIcon,
   List,
   ListOrdered,
+  Quote,
   Redo2,
   Undo2,
 } from "lucide-react";
 import { useId } from "react";
 
 import { cn } from "../../lib/cn.js";
+import { cleanPastedHtml, looksLikeOfficePaste } from "../../lib/pasteCleaner.js";
 
 function ToolbarButton({ onClick, active, disabled, label, children }) {
   return (
@@ -42,7 +44,7 @@ function ToolbarButton({ onClick, active, disabled, label, children }) {
  * tab" on the public site, so an editor clearing a field must produce null
  * rather than the "<p></p>" TipTap leaves behind.
  */
-export function RichTextEditor({ label, value, onChange, hint, error }) {
+export function RichTextEditor({ label, value, onChange, hint, error, onPasteCleaned }) {
   const id = useId();
 
   const editor = useEditor({
@@ -56,6 +58,16 @@ export function RichTextEditor({ label, value, onChange, hint, error }) {
         id,
         class:
           "prose-admin min-h-40 w-full px-3 py-2.5 text-sm text-ink focus:outline-none",
+      },
+
+      // Word and Google Docs paste a wrapper of inline styles, class names and
+      // namespaced tags. ProseMirror's schema drops most of it, but a <style>
+      // block's CSS would arrive as body text and Google Docs' wrapper would
+      // turn the whole paste bold — so it is pre-filtered here.
+      transformPastedHTML: (html) => {
+        const cleaned = cleanPastedHtml(html);
+        if (looksLikeOfficePaste(html)) onPasteCleaned?.();
+        return cleaned;
       },
     },
     onUpdate: ({ editor: instance }) => {
@@ -125,6 +137,13 @@ export function RichTextEditor({ label, value, onChange, hint, error }) {
             onClick={() => editor?.chain().focus().toggleOrderedList().run()}
           >
             <ListOrdered size={15} strokeWidth={2} aria-hidden="true" />
+          </ToolbarButton>
+          <ToolbarButton
+            label="Quote"
+            active={editor?.isActive("blockquote")}
+            onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+          >
+            <Quote size={15} strokeWidth={2} aria-hidden="true" />
           </ToolbarButton>
           <ToolbarButton label="Link" active={editor?.isActive("link")} onClick={toggleLink}>
             <LinkIcon size={15} strokeWidth={2} aria-hidden="true" />

@@ -53,27 +53,35 @@ export const NAV_GROUPS = [
       { to: "/banners", label: "Banners", icon: LayoutPanelTop, capability: "content" },
       { to: "/page-content", label: "Page content", icon: FileStack, capability: "content" },
       { to: "/sections", label: "Sections", icon: Shapes, capability: "marketing" },
-      { to: "/gallery", label: "Gallery", icon: Images, capability: "gallery", issue: "RTPP-45" },
-      { to: "/news", label: "News", icon: Newspaper, capability: "news", issue: "RTPP-46" },
-      { to: "/reviews", label: "Reviews", icon: Star, capability: "reviews", issue: "RTPP-47" },
+      { to: "/gallery", label: "Gallery", icon: Images, capability: "gallery" },
+      { to: "/news", label: "News", icon: Newspaper, capability: "news" },
+      { to: "/reviews", label: "Reviews", icon: Star, capability: "reviews" },
     ],
   },
   {
     id: "leads",
     label: "Leads",
     items: [
-      { to: "/enquiries", label: "Enquiries", icon: FileText, capability: "enquiries", issue: "RTPP-48" },
-      { to: "/applications", label: "Applications", icon: Handshake, capability: "dealer_applications", issue: "RTPP-48" },
-      { to: "/messages", label: "Messages", icon: Mail, capability: "contact_messages", issue: "RTPP-49" },
-      { to: "/subscribers", label: "Subscribers", icon: Users, capability: "newsletter", issue: "RTPP-49" },
+      { to: "/enquiries", label: "Enquiries", icon: FileText, capability: "enquiries" },
+      { to: "/applications", label: "Applications", icon: Handshake, capability: "dealer_applications" },
+      // `badgeKey` reads a count from GET /admin/dashboard/summary. Only unread
+      // messages carry one: a badge on everything is a badge on nothing.
+      {
+        to: "/messages",
+        label: "Messages",
+        icon: Mail,
+        capability: "contact_messages",
+        badgeKey: "unread_messages",
+      },
+      { to: "/subscribers", label: "Subscribers", icon: Users, capability: "newsletter" },
     ],
   },
   {
     id: "library",
     label: "Library",
     items: [
-      { to: "/media", label: "Media library", icon: BookImage, capability: "media", issue: "RTPP-50" },
-      { to: "/downloads", label: "Downloads", icon: Download, capability: "downloads", issue: "RTPP-51" },
+      { to: "/media", label: "Media library", icon: BookImage, capability: "media" },
+      { to: "/downloads", label: "Downloads", icon: Download, capability: "downloads" },
     ],
   },
   {

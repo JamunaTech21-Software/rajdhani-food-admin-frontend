@@ -102,3 +102,24 @@ test("an admin with no permissions at all sees no navigation", () => {
   }
 });
 
+test("the unread badge reads a count the dashboard endpoint actually returns", () => {
+  // The badge is fed from GET /admin/dashboard/summary's `counts` object,
+  // observed live on 2026-09-15. A typo here shows no badge and no error.
+  const SUMMARY_COUNTS = [
+    "new_enquiries",
+    "new_applications",
+    "unread_messages",
+    "pending_reviews",
+    "subscribers",
+  ];
+
+  const badged = NAV_GROUPS.flatMap((g) => g.items).filter((item) => item.badgeKey);
+
+  assert.equal(badged.length, 1, "a badge on everything is a badge on nothing");
+  assert.equal(badged[0].to, "/messages");
+  assert.ok(
+    SUMMARY_COUNTS.includes(badged[0].badgeKey),
+    `"${badged[0].badgeKey}" is not a count the dashboard summary returns`,
+  );
+});
+

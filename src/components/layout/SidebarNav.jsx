@@ -1,9 +1,12 @@
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { NavLink } from "react-router";
 
 import { useCollapsedGroups } from "../../hooks/useCollapsedGroups.js";
+import { api } from "../../lib/api.js";
 import { cn } from "../../lib/cn.js";
+import { hasCapability } from "../../lib/permissions.js";
 import { useAuthStore } from "../../stores/authStore.js";
 import { visibleNavGroups } from "./nav-config.js";
 
@@ -16,7 +19,7 @@ const linkClass = (isActive, collapsed) =>
       : "text-on-brand/80 hover:bg-white/12 hover:text-on-brand",
   );
 
-function NavItem({ to, label, icon: Glyph, end, collapsed, onNavigate }) {
+function NavItem({ to, label, icon: Glyph, end, collapsed, badge, onNavigate }) {
   const link = (
     <NavLink
       to={to}
@@ -25,8 +28,30 @@ function NavItem({ to, label, icon: Glyph, end, collapsed, onNavigate }) {
       title={collapsed ? undefined : label}
       className={({ isActive }) => linkClass(isActive, collapsed)}
     >
-      <Glyph size={17} strokeWidth={1.75} aria-hidden="true" className="shrink-0" />
+      <span className="relative shrink-0">
+        <Glyph size={17} strokeWidth={1.75} aria-hidden="true" />
+        {/* Railed, there is no room for a count beside the label, so it becomes
+            a dot — still says "something is waiting" without the number. */}
+        {badge > 0 && collapsed ? (
+          <span
+            aria-hidden="true"
+            className="absolute -right-1 -top-1 size-2 rounded-full bg-gold ring-2 ring-brand-dark"
+          />
+        ) : null}
+      </span>
+
       <span className={cn("truncate", collapsed && "sr-only")}>{label}</span>
+
+      {badge > 0 ? (
+        <span
+          className={cn(
+            "ml-auto rounded-full bg-gold px-1.5 py-0.5 text-[0.65rem] font-semibold tabular-nums text-on-gold",
+            collapsed && "sr-only",
+          )}
+        >
+          {badge > 99 ? "99+" : badge}
+        </span>
+      ) : null}
     </NavLink>
   );
 
@@ -65,6 +90,16 @@ export function SidebarNav({ collapsed = false, onNavigate }) {
   const permissions = useAuthStore((s) => s.admin?.permissions);
   const [collapsedGroups, toggleGroup] = useCollapsedGroups();
   const groups = visibleNavGroups(permissions);
+
+  // Shares the dashboard's cache key, so this is the same request the dashboard
+  // already makes rather than a second one. Invalidating it after a message is
+  // read is what updates the badge (RTPP-49).
+  const { data: summary } = useQuery({
+    queryKey: ["admin", "dashboard", "summary"],
+    queryFn: () => api.get("/admin/dashboard/summary"),
+    enabled: hasCapability(permissions, "dashboard"),
+    staleTime: 60_000,
+  });
 
   return (
     <Tooltip.Provider delayDuration={200}>
@@ -120,6 +155,7 @@ export function SidebarNav({ collapsed = false, onNavigate }) {
                     key={item.to}
                     {...item}
                     collapsed={collapsed}
+                    badge={item.badgeKey ? summary?.counts?.[item.badgeKey] : 0}
                     onNavigate={onNavigate}
                   />
                 ))}

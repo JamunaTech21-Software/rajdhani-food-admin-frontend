@@ -10,14 +10,43 @@ build (Production, Preview, and Development if you use it):
 
 | Name | Value | Purpose |
 |---|---|---|
-| `VITE_API_BASE_URL` | the API origin **including `/api/v1`** | Every request goes here |
+| `VITE_BASE_URL` | the API origin **including `/api/v1`** | Every request goes here |
 | `VITE_SITE_URL` | the public customer site origin | The "View on site" links |
+
+Set these **in the Vercel dashboard**, not in a file. `.env.local` is gitignored
+(`*.local`), so it is never pushed and Vercel never sees it — it configures your
+machine only.
+
+If the `VITE_` prefix is a problem, the name is negotiable. Vite only
+auto-exposes `VITE_` variables to the browser, but the *build* can read any
+variable Vercel sets, so `vite.config.js` accepts the first of these it finds and
+maps it to one client-side value:
+
+| Purpose | Accepted names, most specific first |
+|---|---|
+| API origin | `VITE_BASE_URL`, `VITE_API_BASE_URL`, `API_BASE_URL`, `BASE_URL` |
+| Customer site | `VITE_SITE_URL`, `SITE_URL` |
+
+The build log says which one it used — `[env] API base URL from BASE_URL=…` — or
+warns that none were set and it is falling back to localhost. Check that line in
+the Vercel build output after changing a variable.
 
 Only `VITE_`-prefixed variables reach the browser, and **everything that reaches
 the browser is public** — it is compiled into the JavaScript bundle. Neither of
 these is a secret, which is why they are the only two. Nothing else belongs
 here: in particular the Cloudinary API secret is a *backend* value and must
 never appear in this project.
+
+One name is reserved on the **client** side: never make `src/config.js` read
+`import.meta.env.BASE_URL`. Vite defines that itself as the app's public base
+path (`/`), so it would resolve to the built-in rather than anything you set —
+and because `/` is a valid string, nothing errors. The app would build, deploy,
+and send every request to its own origin. `tests/envNames.test.mjs` fails if that
+name ever reappears in client code.
+
+Setting `BASE_URL` in the Vercel dashboard is fine and unrelated: that is an
+ordinary build-time variable, which `vite.config.js` reads and maps to
+`VITE_BASE_URL` before the browser ever sees it.
 
 Vite reads these **at build time**, not at runtime. Changing one in Vercel has
 no effect until you redeploy.

@@ -3,13 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { ApiError, ErrorCode } from "@shared/api/errors.js";
 
 import { Button } from "../../components/ui/Button.jsx";
 import { Field, Select, Textarea } from "../../components/ui/Field.jsx";
+import { MediaPicker } from "../../components/ui/MediaPicker.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
 import { hasInvalidWindow } from "../../lib/bannerSchedule.js";
@@ -41,6 +42,8 @@ const schema = z
     secondary_cta_url: optionalUrl,
     video_url: optionalUrl,
     overlay_opacity: z.coerce.number().min(0).max(100),
+    desktop_image_id: z.string().nullish(),
+    mobile_image_id: z.string().nullish(),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
     starts_at: z.string().optional(),
     ends_at: z.string().optional(),
@@ -77,6 +80,8 @@ const EMPTY = {
   secondary_cta_url: "",
   video_url: "",
   overlay_opacity: 40,
+  desktop_image_id: null,
+  mobile_image_id: null,
   status: "PUBLISHED",
   starts_at: "",
   ends_at: "",
@@ -226,6 +231,34 @@ export function BannerFormDialog({ open, onOpenChange, banner, placement }) {
                   <Field label="Primary link" placeholder="/products" error={errors.primary_cta_url?.message} {...register("primary_cta_url")} />
                   <Field label="Secondary button" placeholder="Download Catalogue" error={errors.secondary_cta_label?.message} {...register("secondary_cta_label")} />
                   <Field label="Secondary link" placeholder="/downloads/catalogue" error={errors.secondary_cta_url?.message} {...register("secondary_cta_url")} />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Controller
+                    control={control}
+                    name="desktop_image_id"
+                    render={({ field }) => (
+                      <MediaPicker
+                        label="Desktop artwork"
+                        resource="banners"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="mobile_image_id"
+                    render={({ field }) => (
+                      <MediaPicker
+                        label="Mobile artwork"
+                        hint="Optional — the desktop image is used if this is empty."
+                        resource="banners"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
                 </div>
 
                 <Field

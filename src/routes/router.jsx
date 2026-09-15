@@ -21,6 +21,16 @@ const ProductFormPage = named(() => import("../modules/products/ProductFormPage.
 const BannersPage = named(() => import("../modules/banners/BannersPage.jsx"), "BannersPage");
 const PageContentPage = named(() => import("../modules/page-content/PageContentPage.jsx"), "PageContentPage");
 const SectionsPage = named(() => import("../modules/sections/SectionsPage.jsx"), "SectionsPage");
+const GalleryPage = named(() => import("../modules/gallery/GalleryPage.jsx"), "GalleryPage");
+const NewsPage = named(() => import("../modules/news/NewsPage.jsx"), "NewsPage");
+const NewsFormPage = named(() => import("../modules/news/NewsFormPage.jsx"), "NewsFormPage");
+const ReviewsPage = named(() => import("../modules/reviews/ReviewsPage.jsx"), "ReviewsPage");
+const EnquiriesPage = named(() => import("../modules/leads/EnquiriesPage.jsx"), "EnquiriesPage");
+const ApplicationsPage = named(() => import("../modules/leads/ApplicationsPage.jsx"), "ApplicationsPage");
+const MessagesPage = named(() => import("../modules/messages/MessagesPage.jsx"), "MessagesPage");
+const SubscribersPage = named(() => import("../modules/subscribers/SubscribersPage.jsx"), "SubscribersPage");
+const MediaLibraryPage = named(() => import("../modules/media/MediaLibraryPage.jsx"), "MediaLibraryPage");
+const DownloadsPage = named(() => import("../modules/downloads/DownloadsPage.jsx"), "DownloadsPage");
 
 /**
  * Every module route is wrapped in the capability the API guards it with, so a
@@ -71,6 +81,46 @@ export const router = createBrowserRouter([
           {
             element: <RequireCapability capability="marketing" />,
             children: [{ path: "/sections", element: <SectionsPage /> }],
+          },
+          {
+            element: <RequireCapability capability="gallery" />,
+            children: [{ path: "/gallery", element: <GalleryPage /> }],
+          },
+          {
+            element: <RequireCapability capability="news" />,
+            children: [
+              { path: "/news", element: <NewsPage /> },
+              { path: "/news/new", element: <NewsFormPage /> },
+              { path: "/news/:id", element: <NewsFormPage /> },
+            ],
+          },
+          {
+            element: <RequireCapability capability="reviews" />,
+            children: [{ path: "/reviews", element: <ReviewsPage /> }],
+          },
+          {
+            element: <RequireCapability capability="enquiries" />,
+            children: [{ path: "/enquiries", element: <EnquiriesPage /> }],
+          },
+          {
+            element: <RequireCapability capability="dealer_applications" />,
+            children: [{ path: "/applications", element: <ApplicationsPage /> }],
+          },
+          {
+            element: <RequireCapability capability="contact_messages" />,
+            children: [{ path: "/messages", element: <MessagesPage /> }],
+          },
+          {
+            element: <RequireCapability capability="newsletter" />,
+            children: [{ path: "/subscribers", element: <SubscribersPage /> }],
+          },
+          {
+            element: <RequireCapability capability="media" />,
+            children: [{ path: "/media", element: <MediaLibraryPage /> }],
+          },
+          {
+            element: <RequireCapability capability="downloads" />,
+            children: [{ path: "/downloads", element: <DownloadsPage /> }],
           },
           ...placeholderRoutes,
         ],

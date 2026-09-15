@@ -52,7 +52,13 @@ export const RESOURCES = [
         hint: "Leave blank to follow the brand colour. A fixed value will not change with the theme.",
       },
       { name: "is_active", type: "checkbox", label: "Active" },
-      { name: "icon_image_id", type: "image-note", label: "Custom icon image" },
+      {
+        name: "icon_image_id",
+        type: "image",
+        label: "Custom icon image",
+        resource: "sections",
+        hint: "Optional — overrides the icon above.",
+      },
     ],
     schema: z.object({
       title: required("Enter a title"),
@@ -60,8 +66,16 @@ export const RESOURCES = [
       icon_name: z.string().nullish(),
       icon_bg_color: hexColour,
       is_active: z.boolean(),
+      icon_image_id: z.string().nullish(),
     }),
-    defaults: { title: "", description: "", icon_name: null, icon_bg_color: "", is_active: true },
+    defaults: {
+      title: "",
+      description: "",
+      icon_name: null,
+      icon_bg_color: "",
+      is_active: true,
+      icon_image_id: null,
+    },
     leading: (row) => <IconChip name={row.icon_name} size={17} chipClassName="size-9" />,
     primary: (row) => row.title,
     secondary: (row) => row.description,
@@ -95,7 +109,7 @@ export const RESOURCES = [
       { name: "description", type: "textarea", label: "Description", rows: 2 },
       { name: "icon_name", type: "icon", label: "Icon" },
       { name: "is_active", type: "checkbox", label: "Active" },
-      { name: "image_id", type: "image-note", label: "Step photograph" },
+      { name: "image_id", type: "image", label: "Step photograph", resource: "sections" },
     ],
     schema: z.object({
       step_number: z.coerce.number().int().min(1, "Steps start at 1"),
@@ -103,8 +117,16 @@ export const RESOURCES = [
       description: text(2000),
       icon_name: z.string().nullish(),
       is_active: z.boolean(),
+      image_id: z.string().nullish(),
     }),
-    defaults: { step_number: 1, title: "", description: "", icon_name: null, is_active: true },
+    defaults: {
+      step_number: 1,
+      title: "",
+      description: "",
+      icon_name: null,
+      is_active: true,
+      image_id: null,
+    },
     leading: (row) => (
       <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand text-xs font-semibold text-on-brand">
         {String(row.step_number ?? "?").padStart(2, "0")}
@@ -165,15 +187,30 @@ export const RESOURCES = [
       { name: "name", type: "text", label: "Name", required: true, placeholder: "ISO 22000:2018" },
       { name: "subtitle", type: "text", label: "Subtitle", placeholder: "Food Safety Management" },
       { name: "is_active", type: "checkbox", label: "Active" },
-      { name: "logo_id", type: "image-note", label: "Certification mark" },
-      { name: "certificate_file_id", type: "image-note", label: "Certificate PDF" },
+      { name: "logo_id", type: "image", label: "Certification mark", resource: "certifications" },
+      {
+        name: "certificate_file_id",
+        type: "image",
+        label: "Certificate PDF",
+        resource: "documents",
+        kind: "raw",
+        hint: "The scanned certificate itself, for visitors who want to verify it.",
+      },
     ],
     schema: z.object({
       name: required("Enter a name"),
       subtitle: text(),
       is_active: z.boolean(),
+      logo_id: z.string().nullish(),
+      certificate_file_id: z.string().nullish(),
     }),
-    defaults: { name: "", subtitle: "", is_active: true },
+    defaults: {
+      name: "",
+      subtitle: "",
+      is_active: true,
+      logo_id: null,
+      certificate_file_id: null,
+    },
     leading: null,
     primary: (row) => row.name,
     secondary: (row) => row.subtitle,
@@ -201,7 +238,7 @@ export const RESOURCES = [
           ["ARCHIVED", "Archived"],
         ],
       },
-      { name: "avatar_id", type: "image-note", label: "Author photograph" },
+      { name: "avatar_id", type: "image", label: "Author photograph", resource: "sections" },
     ],
     schema: z.object({
       quote: required("Enter the quote", 2000),
@@ -209,8 +246,16 @@ export const RESOURCES = [
       author_role: text(),
       rating: z.coerce.number().int().min(1).max(5).nullable(),
       status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
+      avatar_id: z.string().nullish(),
     }),
-    defaults: { quote: "", author_name: "", author_role: "", rating: null, status: "PUBLISHED" },
+    defaults: {
+      quote: "",
+      author_name: "",
+      author_role: "",
+      rating: null,
+      status: "PUBLISHED",
+      avatar_id: null,
+    },
     leading: null,
     primary: (row) => row.author_name,
     secondary: (row) => row.quote,
@@ -224,10 +269,6 @@ export const RESOURCES = [
 ];
 
 export const resourceById = (id) => RESOURCES.find((r) => r.id === id) ?? RESOURCES[0];
-
-/** Fields that need the media library, which is RTPP-50. */
-export const blockedImageFields = (resource) =>
-  resource.fields.filter((field) => field.type === "image-note");
 
 /** The shared "inactive" marker, for resources that carry `is_active`. */
 export const inactiveBadge = (row) =>

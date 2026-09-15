@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import { ApiError, ErrorCode } from "@shared/api/errors.js";
 
 import { Button } from "../../components/ui/Button.jsx";
 import { Field, Select, Textarea } from "../../components/ui/Field.jsx";
+import { MediaPicker } from "../../components/ui/MediaPicker.jsx";
 import { Skeleton } from "../../components/ui/Skeleton.jsx";
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
@@ -36,6 +37,7 @@ const schema = z
     bullet_points: z.array(z.string()),
     cta_label: z.string().max(128).optional(),
     cta_url: optionalUrl,
+    image_id: z.string().nullish(),
     status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
   })
   .superRefine((value, ctx) => {
@@ -56,6 +58,7 @@ const EMPTY = {
   bullet_points: [],
   cta_label: "",
   cta_url: "",
+  image_id: null,
   status: "PUBLISHED",
 };
 
@@ -69,6 +72,7 @@ const toFormValues = (row) =>
         bullet_points: row.bullet_points ?? [],
         cta_label: row.cta_label ?? "",
         cta_url: row.cta_url ?? "",
+        image_id: row.image_id ?? null,
         status: row.status ?? "PUBLISHED",
       }
     : EMPTY;
@@ -112,6 +116,7 @@ export function BlockEditorDialog({ open, onOpenChange, pageKey, block }) {
         bullet_points: values.bullet_points,
         cta_label: values.cta_label || null,
         cta_url: values.cta_url || null,
+        image_id: values.image_id || null,
         status: values.status,
       };
 
@@ -235,13 +240,18 @@ export function BlockEditorDialog({ open, onOpenChange, pageKey, block }) {
               ) : null}
 
               {shows("image") ? (
-                <p className="flex items-start gap-2.5 rounded-md bg-info-tint p-3 text-sm text-info">
-                  <ImagePlus size={17} strokeWidth={1.75} aria-hidden="true" className="mt-0.5 shrink-0" />
-                  <span>
-                    This block shows an image. Choosing one needs the media library, which arrives
-                    with RTPP-50 — any image already set stays as it is.
-                  </span>
-                </p>
+                <Controller
+                  control={control}
+                  name="image_id"
+                  render={({ field }) => (
+                    <MediaPicker
+                      label="Image"
+                      resource="pages"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
               ) : null}
 
               {shows("cta") ? (

@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Star, X } from "lucide-react";
+import { Star, X } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -12,6 +12,7 @@ import { Checkbox, Field, Select, Textarea } from "../../components/ui/Field.jsx
 import { useToast } from "../../components/ui/toast-context.js";
 import { api } from "../../lib/api.js";
 import { cn } from "../../lib/cn.js";
+import { MediaPicker } from "../../components/ui/MediaPicker.jsx";
 import { IconPicker } from "../categories/IconPicker.jsx";
 
 function RatingField({ value, onChange, label }) {
@@ -193,18 +194,23 @@ export function ResourceFormDialog({ open, onOpenChange, resource, row, scope })
           />
         );
 
-      case "image-note":
+      case "image":
         return (
-          <p
+          <Controller
             key={field.name}
-            className="flex items-start gap-2.5 rounded-md bg-info-tint p-3 text-sm text-info"
-          >
-            <ImagePlus size={17} strokeWidth={1.75} aria-hidden="true" className="mt-0.5 shrink-0" />
-            <span>
-              <strong className="font-medium">{field.label}</strong> needs the media library, which
-              arrives with RTPP-50. Anything already set is left as it is.
-            </span>
-          </p>
+            control={control}
+            name={field.name}
+            render={({ field: f }) => (
+              <MediaPicker
+                label={field.label}
+                hint={field.hint}
+                resource={field.resource ?? "sections"}
+                kind={field.kind ?? "image"}
+                value={f.value}
+                onChange={f.onChange}
+              />
+            )}
+          />
         );
 
       default:

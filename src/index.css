@@ -1,2 +1,34 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@import "../../shared/theme/tokens.css";
+
+/* ../../shared lives outside this app's root, so Tailwind needs telling. */
+@source "../../shared";
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* D1: the dashboard uses the sans family for headings. The Playfair display
+     face belongs to the customer site — at table density it reads as decoration. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}

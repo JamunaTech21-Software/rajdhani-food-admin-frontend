@@ -18,6 +18,7 @@ const DashboardPage = named(() => import("../modules/dashboard/DashboardPage.jsx
 const CategoriesPage = named(() => import("../modules/categories/CategoriesPage.jsx"), "CategoriesPage");
 const ProductsPage = named(() => import("../modules/products/ProductsPage.jsx"), "ProductsPage");
 const ProductFormPage = named(() => import("../modules/products/ProductFormPage.jsx"), "ProductFormPage");
+const BannersPage = named(() => import("../modules/banners/BannersPage.jsx"), "BannersPage");
 
 /**
  * Every module route is wrapped in the capability the API guards it with, so a
@@ -57,6 +58,10 @@ export const router = createBrowserRouter([
               { path: "/products/new", element: <ProductFormPage /> },
               { path: "/products/:id", element: <ProductFormPage /> },
             ],
+          },
+          {
+            element: <RequireCapability capability="content" />,
+            children: [{ path: "/banners", element: <BannersPage /> }],
           },
           ...placeholderRoutes,
         ],

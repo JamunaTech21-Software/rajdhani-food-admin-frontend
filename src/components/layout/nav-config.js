@@ -50,7 +50,7 @@ export const NAV_GROUPS = [
     id: "content",
     label: "Content",
     items: [
-      { to: "/banners", label: "Banners", icon: LayoutPanelTop, capability: "content", issue: "RTPP-42" },
+      { to: "/banners", label: "Banners", icon: LayoutPanelTop, capability: "content" },
       { to: "/page-content", label: "Page content", icon: FileStack, capability: "content", issue: "RTPP-43" },
       { to: "/sections", label: "Sections", icon: Shapes, capability: "marketing", issue: "RTPP-44" },
       { to: "/gallery", label: "Gallery", icon: Images, capability: "gallery", issue: "RTPP-45" },

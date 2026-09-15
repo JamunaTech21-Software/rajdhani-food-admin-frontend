@@ -1,11 +1,24 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Outlet, useLocation } from "react-router";
 
+import { Container } from "../ui/Container.jsx";
+import { Skeleton } from "../ui/Skeleton.jsx";
 import { Brandmark } from "./Brandmark.jsx";
 import { SidebarNav } from "./SidebarNav.jsx";
 import { TopBar } from "./TopBar.jsx";
+
+function RouteFallback() {
+  return (
+    <Container as="div" className="py-8">
+      <div role="status" aria-label="Loading page" aria-busy="true">
+        <Skeleton className="h-8 w-56" />
+        <Skeleton className="mt-6 h-64 w-full" />
+      </div>
+    </Container>
+  );
+}
 
 export function AdminLayout() {
   const [navOpen, setNavOpen] = useState(false);
@@ -50,8 +63,11 @@ export function AdminLayout() {
 
       <div className="lg:pl-64">
         <TopBar onOpenNav={() => setNavOpen(true)} />
-        {/* Keyed on pathname so focus and scroll reset between screens. */}
-        <Outlet key={location.pathname} />
+        {/* Shared boundary for the route-split module screens. Keyed on
+            pathname so focus and scroll reset between them. */}
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet key={location.pathname} />
+        </Suspense>
       </div>
     </div>
   );

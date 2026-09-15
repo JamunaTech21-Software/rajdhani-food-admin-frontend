@@ -42,8 +42,8 @@ export const NAV_GROUPS = [
     id: "catalogue",
     label: "Catalogue",
     items: [
-      { to: "/products", label: "Products", icon: Package, capability: "products", issue: "RTPP-41" },
-      { to: "/categories", label: "Categories", icon: Tags, capability: "products", issue: "RTPP-41" },
+      { to: "/products", label: "Products", icon: Package, capability: "products" },
+      { to: "/categories", label: "Categories", icon: Tags, capability: "products" },
     ],
   },
   {

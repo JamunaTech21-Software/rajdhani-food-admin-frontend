@@ -1,60 +1,97 @@
 import { useId } from "react";
 
 import { cn } from "../../lib/cn.js";
+import { controlClass } from "./control-class.js";
+import { FieldFrame } from "./FieldFrame.jsx";
 
 // React 19 passes `ref` as an ordinary prop, so react-hook-form's register()
-// spread carries its ref straight through to the input — no forwardRef needed.
+// spread carries its ref straight through to the control — no forwardRef needed.
 export function Field({ label, required = false, error, hint, icon = null, className, ...props }) {
-  const id = useId();
-  const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
+  const uid = useId();
 
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
-      <label htmlFor={id} className="text-sm font-medium text-ink">
-        {label}
-        {required ? (
-          <span className="ml-0.5 text-danger" aria-hidden="true">
-            *
-          </span>
-        ) : null}
-      </label>
+    <FieldFrame id={uid} label={label} required={required} error={error} hint={hint} className={className}>
+      {({ id, describedBy, invalid }) => (
+        <div className="relative">
+          {icon ? (
+            <span
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle"
+              aria-hidden="true"
+            >
+              {icon}
+            </span>
+          ) : null}
 
-      <div className="relative">
-        {icon ? (
-          <span
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle"
-            aria-hidden="true"
-          >
-            {icon}
-          </span>
-        ) : null}
+          <input
+            id={id}
+            required={required}
+            aria-invalid={invalid || undefined}
+            aria-describedby={describedBy}
+            className={cn(controlClass(invalid), "h-11", icon ? "pl-10 pr-3" : "px-3")}
+            {...props}
+          />
+        </div>
+      )}
+    </FieldFrame>
+  );
+}
 
-        <input
+export function Textarea({ label, required = false, error, hint, className, rows = 4, ...props }) {
+  const uid = useId();
+
+  return (
+    <FieldFrame id={uid} label={label} required={required} error={error} hint={hint} className={className}>
+      {({ id, describedBy, invalid }) => (
+        <textarea
           id={id}
+          rows={rows}
           required={required}
-          aria-invalid={error ? true : undefined}
+          aria-invalid={invalid || undefined}
           aria-describedby={describedBy}
-          className={cn(
-            "h-11 w-full rounded-md border bg-surface text-sm text-ink",
-            "placeholder:text-ink-subtle",
-            "transition-colors duration-(--duration-fast)",
-            "disabled:cursor-not-allowed disabled:opacity-60",
-            icon ? "pl-10 pr-3" : "px-3",
-            error ? "border-danger" : "border-line hover:border-line-strong",
-          )}
+          className={cn(controlClass(invalid), "px-3 py-2.5")}
           {...props}
         />
-      </div>
+      )}
+    </FieldFrame>
+  );
+}
 
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-sm text-danger">
-          {error}
-        </p>
-      ) : hint ? (
-        <p id={`${id}-hint`} className="text-sm text-ink-muted">
-          {hint}
-        </p>
-      ) : null}
+export function Select({ label, required = false, error, hint, className, children, ...props }) {
+  const uid = useId();
+
+  return (
+    <FieldFrame id={uid} label={label} required={required} error={error} hint={hint} className={className}>
+      {({ id, describedBy, invalid }) => (
+        <select
+          id={id}
+          required={required}
+          aria-invalid={invalid || undefined}
+          aria-describedby={describedBy}
+          className={cn(controlClass(invalid), "h-11 px-3")}
+          {...props}
+        >
+          {children}
+        </select>
+      )}
+    </FieldFrame>
+  );
+}
+
+export function Checkbox({ label, description, className, ...props }) {
+  const id = useId();
+
+  return (
+    <div className={cn("flex items-start gap-2.5", className)}>
+      <input
+        id={id}
+        type="checkbox"
+        className="mt-0.5 size-4 shrink-0 rounded-sm border-line-strong text-brand accent-[var(--color-brand)]"
+        {...props}
+      />
+      <label htmlFor={id} className="text-sm text-ink">
+        {label}
+        {description ? <span className="block text-ink-muted">{description}</span> : null}
+      </label>
     </div>
   );
 }

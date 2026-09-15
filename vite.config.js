@@ -9,7 +9,9 @@ export default defineConfig({
   plugins: [tailwindcss(), react()],
   resolve: {
     alias: {
-      "@shared": fileURLToPath(new URL("../shared", import.meta.url)),
+      // Inside src/ so this repo is self-contained and can build on its own —
+      // Vercel's build root is this directory, with no parent to reach into.
+      "@shared": fileURLToPath(new URL("./src/shared", import.meta.url)),
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
@@ -19,9 +21,5 @@ export default defineConfig({
     // so fail loudly instead.
     port: 5173,
     strictPort: true,
-    fs: {
-      // ../shared sits outside this app's root
-      allow: [fileURLToPath(new URL("..", import.meta.url))],
-    },
   },
 });

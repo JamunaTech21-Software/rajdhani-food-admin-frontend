@@ -1,0 +1,102 @@
+/**
+ * Rajdhani design tokens — the single source of colour, type and form for both
+ * the customer site and the admin dashboard.
+ *
+ * The values below are only the first-paint fallback. At boot `applyTheme.js`
+ * overwrites --color-brand / --color-gold / --color-accent and their derived
+ * shades from the site_profile row, which is what makes acceptance §18.2 true:
+ * an admin changes primary_color and the running app restyles with no deploy.
+ *
+ * Because of that, no component may hardcode a colour. Use the tokens.
+ */
+
+@theme {
+  /* Brand — overwritten at runtime from site_profile */
+  --color-brand: #1b5e20;
+  --color-brand-dark: #144a18;
+  --color-brand-deep: #0d3411;
+  --color-brand-tint: #d9edd8;
+  --color-brand-muted: #4a8050;
+  --color-on-brand: #ffffff;
+
+  --color-gold: #c9a227;
+  --color-gold-tint: #f6efd9;
+  --color-on-gold: #1a1a1a;
+
+  --color-accent: #ffffff;
+
+  /* Surfaces */
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-ground: #f7f9f7;
+  --color-ground-warm: #f4f7f3;
+
+  /* Text */
+  --color-ink: #1a1a1a;
+  --color-ink-muted: #5a6a5a;
+  --color-ink-subtle: #8a978a;
+  --color-ink-inverse: #ffffff;
+
+  /* Lines */
+  --color-line: #e4eae4;
+  --color-line-strong: #cbd6cb;
+
+  /* Status — deliberately NOT brand-derived. A green brand colour must not be
+     able to make an APPROVED chip illegible against a REJECTED one. */
+  --color-success: #167c3c;
+  --color-success-tint: #e6f4ec;
+  --color-warning: #a96a00;
+  --color-warning-tint: #fdf2e2;
+  --color-danger: #b3261e;
+  --color-danger-tint: #fceceb;
+  --color-info: #1d5d9b;
+  --color-info-tint: #e8f1fa;
+
+  /* Type */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Playfair Display", ui-serif, Georgia, "Times New Roman", serif;
+
+  --text-eyebrow: 0.72rem;
+  --text-eyebrow--line-height: 1.1;
+  --text-eyebrow--letter-spacing: 0.12em;
+  --text-eyebrow--font-weight: 600;
+
+  /* Form */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-card: 0 1px 2px rgb(16 24 16 / 0.04), 0 4px 16px rgb(16 24 16 / 0.06);
+  --shadow-raised: 0 2px 4px rgb(16 24 16 / 0.06), 0 12px 28px rgb(16 24 16 / 0.1);
+  --shadow-modal: 0 8px 20px rgb(16 24 16 / 0.12), 0 32px 64px rgb(16 24 16 / 0.18);
+
+  /* Motion — every consumer must still respect prefers-reduced-motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-panel: 250ms;
+}
+
+/* Section rhythm is a plain custom property, not a @theme token: it is read by
+   arbitrary-value utilities rather than generating a utility class of its own. */
+:root {
+  --space-section: 80px;
+  --container-max: 1280px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --space-section: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

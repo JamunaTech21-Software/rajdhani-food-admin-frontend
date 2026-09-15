@@ -51,8 +51,8 @@ export const NAV_GROUPS = [
     label: "Content",
     items: [
       { to: "/banners", label: "Banners", icon: LayoutPanelTop, capability: "content" },
-      { to: "/page-content", label: "Page content", icon: FileStack, capability: "content", issue: "RTPP-43" },
-      { to: "/sections", label: "Sections", icon: Shapes, capability: "marketing", issue: "RTPP-44" },
+      { to: "/page-content", label: "Page content", icon: FileStack, capability: "content" },
+      { to: "/sections", label: "Sections", icon: Shapes, capability: "marketing" },
       { to: "/gallery", label: "Gallery", icon: Images, capability: "gallery", issue: "RTPP-45" },
       { to: "/news", label: "News", icon: Newspaper, capability: "news", issue: "RTPP-46" },
       { to: "/reviews", label: "Reviews", icon: Star, capability: "reviews", issue: "RTPP-47" },

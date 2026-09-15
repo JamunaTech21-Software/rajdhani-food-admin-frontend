@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { createApiClient, unwrapList } from "../../shared/api/client.js";
-import { ApiError } from "../../shared/api/errors.js";
+import { createApiClient, unwrapList } from "../src/shared/api/client.js";
+import { ApiError } from "../src/shared/api/errors.js";
 
 const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {

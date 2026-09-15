@@ -2,6 +2,7 @@ import { createApiClient } from "@shared/api/client.js";
 
 import { API_BASE_URL } from "../config.js";
 import { useAuthStore } from "../stores/authStore.js";
+import { queryClient } from "./queryClient.js";
 
 // Deliberately a bare fetch, not `api.post`: routing the refresh call through
 // the client that intercepts 401s would recurse.
@@ -50,7 +51,9 @@ export async function restoreSession() {
 
 export async function logout() {
   // Unauthenticated by design — a session whose access token already expired
-  // must still be able to end itself.
+  // must still be able to end itself. The call is what revokes the refresh
+  // token server-side; clearing local state alone would leave a usable cookie.
   await api.post("/auth/admin/logout", undefined, { auth: false }).catch(() => null);
   useAuthStore.getState().clear();
+  queryClient.clear(); // no previous admin's data may outlive their session
 }

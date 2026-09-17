@@ -7,8 +7,11 @@ import { z } from "zod";
 
 import { ApiError, ErrorCode } from "@shared/api/errors.js";
 
+import { BrandMark } from "../components/ui/BrandMark.jsx";
 import { Button } from "../components/ui/Button.jsx";
 import { Field } from "../components/ui/Field.jsx";
+import { PasswordField } from "../components/ui/PasswordField.jsx";
+import { TeaGardenBackdrop } from "../components/ui/TeaGardenBackdrop.jsx";
 import { formatWait, useCountdown } from "../hooks/useCountdown.js";
 import { api } from "../lib/api.js";
 import { useAuthStore } from "../stores/authStore.js";
@@ -85,10 +88,33 @@ export function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-dvh place-items-center bg-ground px-4 py-10">
+    <main className="auth-backdrop grid min-h-dvh place-items-center overflow-hidden px-4 py-10">
+      {/*
+        The land, under the sky the backdrop class paints.
+
+        A fixed height per breakpoint rather than a percentage of the viewport:
+        the viewBox is long and shallow, and `slice` crops whichever axis has
+        the slack. Sized as a share of the screen it would be nearly square on a
+        phone, which crops away everything but the middle of one slope. These
+        heights keep the box roughly the shape of the drawing at every width, so
+        the crop stays mild and the composition survives.
+      */}
+      <TeaGardenBackdrop className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-44 w-full sm:h-64 lg:h-80 xl:h-[26rem]" />
+
+      {/* One leaf, low in the far corner — a single literal thing to anchor
+          what the slopes only imply. Hidden on a phone, where it would sit
+          behind the card rather than beside it. */}
+      <BrandMark
+        rounded={false}
+        size={340}
+        className="pointer-events-none absolute -bottom-16 -right-16 -z-10 hidden text-on-brand/[0.07] lg:block"
+      />
+
       <div className="w-full max-w-sm">
-        <div className="rounded-xl bg-surface p-8 shadow-card">
-          <p className="text-eyebrow uppercase text-brand">Rajdhani Food Products</p>
+        <div className="rounded-xl bg-surface p-8 shadow-modal">
+          <BrandMark size={44} title="Rajdhani Food Products" />
+
+          <p className="mt-4 text-eyebrow uppercase text-brand">Rajdhani Food Products</p>
           <h1 className="mt-2 text-xl font-semibold text-ink">Sign in</h1>
           <p className="mt-1 text-sm text-ink-muted">
             Use the credentials issued to you by a Super Admin.
@@ -108,9 +134,8 @@ export function LoginPage() {
               {...register("email")}
             />
 
-            <Field
+            <PasswordField
               label="Password"
-              type="password"
               autoComplete="current-password"
               placeholder="••••••••••"
               required
@@ -135,7 +160,9 @@ export function LoginPage() {
           </form>
         </div>
 
-        <p className="mt-4 text-center text-sm text-ink-muted">
+        {/* On the dark backdrop this has to be inverse ink — `text-ink-muted`
+            is a mid-grey chosen for a pale surface and is barely legible here. */}
+        <p className="mt-4 text-center text-sm text-ink-inverse/75">
           Lost your password? Ask a Super Admin to send you a reset link.
         </p>
       </div>

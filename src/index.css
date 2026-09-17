@@ -132,3 +132,40 @@
     pointer-events: none;
   }
 }
+
+/**
+ * The sign-in sky.
+ *
+ * Just the light: a low sun off to the left, the warm haze it throws across the
+ * top, and the brand deepening towards the horizon. The land is
+ * `TeaGardenBackdrop`, which sits over this — keeping them apart means the
+ * slopes can be geometry and the light can be gradients, each doing the thing
+ * it is good at.
+ *
+ * Every colour is a `var(--color-*)` mixed with `color-mix` rather than written
+ * as an rgba literal, so this follows `primary_color` the way the rest of the
+ * app does (§18.2) — and that is also why it lives in CSS, since a component may
+ * not name a colour at all.
+ *
+ * Deliberately static. A drifting gradient behind a password field is motion
+ * nobody asked for on the one screen where people are typing carefully.
+ */
+@layer components {
+  .auth-backdrop {
+    position: relative;
+    isolation: isolate;
+    background-color: var(--color-brand-deep);
+    background-image:
+      radial-gradient(
+        ellipse 55% 42% at 20% 6%,
+        color-mix(in srgb, var(--color-gold) 30%, transparent),
+        transparent 66%
+      ),
+      radial-gradient(
+        ellipse 95% 55% at 55% -8%,
+        color-mix(in srgb, var(--color-brand-muted) 42%, transparent),
+        transparent 72%
+      ),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-brand) 34%, transparent), transparent 48%);
+  }
+}

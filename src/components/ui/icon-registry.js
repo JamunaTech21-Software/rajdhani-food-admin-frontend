@@ -1,5 +1,6 @@
 import {
   Award,
+  Calendar,
   Boxes,
   CircleCheck,
   CircleHelp,
@@ -14,6 +15,8 @@ import {
   Image,
   Leaf,
   Mail,
+  Mountain,
+  Map,
   Package,
   ShieldCheck,
   Sparkles,
@@ -37,6 +40,7 @@ import {
  */
 export const REGISTRY = {
   award: Award,
+  calendar: Calendar,
   boxes: Boxes,
   "check-circle": CircleCheck,
   coffee: Coffee,
@@ -50,6 +54,8 @@ export const REGISTRY = {
   image: Image,
   leaf: Leaf,
   mail: Mail,
+  mountain: Mountain,
+  map: Map,
   package: Package,
   "shield-check": ShieldCheck,
   sparkles: Sparkles,

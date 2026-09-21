@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "../../lib/api.js";
+import { brandLogo } from "../../lib/brand.js";
 import { cn } from "../../lib/cn.js";
 
 /**
@@ -16,21 +17,23 @@ export function Brandmark({ collapsed = false }) {
   });
 
   const site = data?.site;
-  const logo = site?.logos?.light ?? site?.logos?.dark;
+  const logo = brandLogo(site?.logos?.light ?? site?.logos?.dark, site?.name);
 
   return (
     <div className={cn("flex h-14 items-center gap-2.5", collapsed ? "justify-center px-0" : "px-5")}>
-      {logo?.url ? (
-        <img
-          src={logo.url}
-          alt=""
-          width={28}
-          height={28}
-          className="size-7 shrink-0 rounded object-contain"
-        />
-      ) : (
-        <span className="size-7 shrink-0 rounded bg-white/15" aria-hidden="true" />
-      )}
+      {/*
+        A white chip behind it. The supplied logo is a lockup on an opaque white
+        background, and the sidebar is dark brand green — without something to
+        sit on it reads as a white rectangle rather than as a mark. The chip is
+        what a transparent logo would not need.
+      */}
+      <img
+        src={logo.url}
+        alt=""
+        width={28}
+        height={28}
+        className="size-7 shrink-0 rounded bg-white object-contain p-0.5"
+      />
 
       {/* Hidden rather than unmounted, so the width transition has something to
           slide against instead of the text reflowing mid-animation. */}

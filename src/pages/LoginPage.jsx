@@ -8,6 +8,7 @@ import { z } from "zod";
 import { ApiError, ErrorCode } from "@shared/api/errors.js";
 
 import { BrandMark } from "../components/ui/BrandMark.jsx";
+import { BUNDLED_LOGO } from "../lib/brand.js";
 import { Button } from "../components/ui/Button.jsx";
 import { Field } from "../components/ui/Field.jsx";
 import { PasswordField } from "../components/ui/PasswordField.jsx";
@@ -112,7 +113,21 @@ export function LoginPage() {
 
       <div className="w-full max-w-sm">
         <div className="rounded-xl bg-surface p-8 shadow-modal">
-          <BrandMark size={44} title="Rajdhani Food Products" />
+          {/*
+            The supplied logo is a horizontal lockup — a wordmark with leaf art,
+            about 3:2 — so it gets a box of that shape rather than the square the
+            leaf glyph used. Sized by height and left to find its own width, or a
+            square box would letterbox it to about half the height and the
+            wordmark inside would be too small to read.
+
+            The card is white and so is the file's background, which is the one
+            place on either app where that costs nothing.
+          */}
+          <img
+            src={BUNDLED_LOGO}
+            alt="Rajdhani Food Products"
+            className="h-12 w-auto"
+          />
 
           <p className="mt-4 text-eyebrow uppercase text-brand">Rajdhani Food Products</p>
           <h1 className="mt-2 text-xl font-semibold text-ink">Sign in</h1>

@@ -25,3 +25,14 @@ dist-ssr
 
 # Vercel
 .vercel
+
+# Design references, not app assets. 162 MB between them in this app alone, and
+# they sit in the Vite public directory — so every build copies them into dist/
+# and a deploy would publish the entire design archive. The customer app has
+# carried this rule since its own deploy prep; this one did not, and a
+# `git add frontend/admin` staged all of it.
+#
+# They stay on the machines that have them. Nothing the dashboard renders should
+# ever come from here — its images arrive from Cloudinary through the API.
+public/RajdhaniWebsiteReferenceImages/
+public/RajdhaniPagesRequireImages/

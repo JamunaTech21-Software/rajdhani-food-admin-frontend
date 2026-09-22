@@ -53,6 +53,24 @@ export const PAGES = [
         where: "Third card — the ticked list of company values.",
         uses: ["heading", "bullet_points"],
       },
+      {
+        key: "foundations",
+        label: "Foundations heading",
+        where: "The eyebrow and title above the three cards.",
+        uses: ["eyebrow", "heading"],
+      },
+      {
+        key: "strength",
+        label: "Our strength",
+        where: "The prose and button beside the five manufacturing steps.",
+        uses: ["eyebrow", "heading", "body", "cta"],
+      },
+      {
+        key: "certifications",
+        label: "Certifications heading",
+        where: "The eyebrow and title beside the certification marks.",
+        uses: ["eyebrow", "heading"],
+      },
     ],
   },
   {
@@ -71,6 +89,18 @@ export const PAGES = [
         label: "Quality assurance promise",
         where: "The closing dark panel with its checklist.",
         uses: ["heading", "body", "bullet_points"],
+      },
+      {
+        key: "process",
+        label: "Process heading",
+        where: "The eyebrow and title above the five-step process.",
+        uses: ["eyebrow", "heading"],
+      },
+      {
+        key: "certifications",
+        label: "Certifications heading",
+        where: "The eyebrow and title above the certification marks.",
+        uses: ["eyebrow", "heading"],
       },
     ],
   },

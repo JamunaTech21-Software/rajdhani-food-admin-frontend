@@ -35,7 +35,20 @@ const schema = z
     heading: z.string().max(255).optional(),
     subheading: z.string().max(255).optional(),
     body: z.string().nullish(),
-    bullet_points: z.array(z.string()),
+    // The raw text of the box, not the parsed list.
+    //
+    // It used to be `z.array(z.string())`, with the textarea splitting on
+    // every keystroke and joining back for display. That made the field
+    // impossible to type a second line into: pressing Enter produced an empty
+    // line, `filter(Boolean)` dropped it, the array came back unchanged, and
+    // the controlled value rewrote the box without the newline. The list could
+    // only ever hold what was seeded into it.
+    //
+    // Keeping the text itself in form state means the box holds exactly what
+    // was typed — blank lines, trailing spaces and all — and the split happens
+    // once, on submit. `reset()` keeps working because the value is a plain
+    // string like every other field here.
+    bullet_points: z.string(),
     cta_label: z.string().max(128).optional(),
     cta_url: optionalUrl,
     image_id: z.string().nullish(),
@@ -56,7 +69,7 @@ const EMPTY = {
   heading: "",
   subheading: "",
   body: null,
-  bullet_points: [],
+  bullet_points: "",
   cta_label: "",
   cta_url: "",
   image_id: null,
@@ -70,7 +83,7 @@ const toFormValues = (row) =>
         heading: row.heading ?? "",
         subheading: row.subheading ?? "",
         body: row.body ?? null,
-        bullet_points: row.bullet_points ?? [],
+        bullet_points: (row.bullet_points ?? []).join("\n"),
         cta_label: row.cta_label ?? "",
         cta_url: row.cta_url ?? "",
         image_id: row.image_id ?? null,
@@ -114,7 +127,13 @@ export function BlockEditorDialog({ open, onOpenChange, pageKey, block }) {
         heading: values.heading || null,
         subheading: values.subheading || null,
         body: values.body || null,
-        bullet_points: values.bullet_points,
+        // Parsed here, once, rather than on every keystroke. Blank lines and
+        // stray indentation are the normal debris of typing a list and are
+        // dropped on the way out, not while the cursor is still in the box.
+        bullet_points: values.bullet_points
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean),
         cta_label: values.cta_label || null,
         cta_url: values.cta_url || null,
         image_id: values.image_id || null,
@@ -218,26 +237,15 @@ export function BlockEditorDialog({ open, onOpenChange, pageKey, block }) {
               ) : null}
 
               {shows("bullet_points") ? (
-                <Controller
-                  control={control}
-                  name="bullet_points"
-                  render={({ field }) => (
-                    <Textarea
-                      label="List items"
-                      hint="One per line. Rendered as the ticked list."
-                      rows={5}
-                      value={(field.value ?? []).join("\n")}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value
-                            .split("\n")
-                            .map((line) => line.trim())
-                            .filter(Boolean),
-                        )
-                      }
-                      onBlur={field.onBlur}
-                    />
-                  )}
+                // Registered directly, like the other text fields. It was a
+                // `Controller` so it could translate between the box and an
+                // array on every keystroke, which is the thing that stopped
+                // the list ever growing — see the schema note.
+                <Textarea
+                  label="List items"
+                  hint="One per line, as many as you need."
+                  rows={8}
+                  {...register("bullet_points")}
                 />
               ) : null}
 

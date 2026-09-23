@@ -136,6 +136,19 @@ export const PAGES = [
     ],
   },
   {
+    key: "gallery",
+    label: "Gallery",
+    path: "/gallery",
+    blocks: [
+      {
+        key: "closing",
+        label: "Closing strip",
+        where: "The heading and line beside the counters at the foot of the gallery.",
+        uses: ["heading", "body"],
+      },
+    ],
+  },
+  {
     key: "contact",
     label: "Contact Us",
     path: "/contact",
@@ -187,6 +200,8 @@ export const SECTIONS_ELSEWHERE = {
   quality: "The commitment grid, the five-step process and certifications are on Sections.",
   dealer: "The benefit cards, network counters and the five-step timeline are on Sections.",
   contact: "The assurance strip along the bottom is on Sections.",
+  gallery:
+    "The images and their categories are on Gallery; the four counters beside this strip are on Sections.",
 };
 
 const PAGE_BY_KEY = new Map(PAGES.map((page) => [page.key, page]));

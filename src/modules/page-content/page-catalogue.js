@@ -112,14 +112,16 @@ export const PAGES = [
       {
         key: "intro",
         label: "Why partner with us",
-        where: "The prose beside the benefit cards.",
-        uses: ["heading", "body", "cta"],
+        where:
+          "The prose beside the benefit cards. Its list items are the four chips over the hero banner.",
+        uses: ["heading", "body", "bullet_points", "cta"],
       },
       {
         key: "network",
         label: "Distribution network",
-        where: "Heading and subtext above the map and its counters.",
-        uses: ["heading", "subheading"],
+        where:
+          "Heading and subtext beside the counters. The image is the decorative Bangladesh map.",
+        uses: ["heading", "subheading", "image"],
       },
       {
         key: "requirements",
